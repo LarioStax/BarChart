@@ -54,6 +54,7 @@ let drawChart = function() {
 	// Create tooltop
 	let toolTip = d3.select("body")
 										.append("div")
+											.attr("id", "tooltip")
 											.style("position", "absolute")
 											.style("background-color", "#eee")
 											.style("color", "black")
@@ -69,6 +70,7 @@ let drawChart = function() {
 								`<p>Date: ${el[0]}</p>
 								<p>Billions: ${el[1]}` 
 							)
+								.attr("data-date", el[0])
 		d3.select(this)
 				.style("opacity", 0.5)
 	}
@@ -91,6 +93,8 @@ let drawChart = function() {
 		.enter()
 		.append("rect")
 			.classed("bar", true)
+			.attr("data-date", (d) => d[0])
+			.attr("data-gdp", (d) => d[1])
 			.attr("x", (d, i) => i*barWidth+padding)
 			.attr("y", d => yScale(d[1]))
 			.attr("width", barWidth)
@@ -102,14 +106,15 @@ let drawChart = function() {
 			.on("mousemove", handleMouseMovement)
 			.on("mouseout", handleMouseOut)
 
+	// Append the y axis and move it to the edge of the graph (padding, 0)
 	svg
 		.append("g")
 			.attr("id", "y-axis")
-		// .attr("transform", "translate(" + height-padding + "," + padding + ")")
 			.attr("transform", `translate( ${padding}, 0)`)
 			.style("color", "white")
 		.call(yAxis)
 
+	// Append the y-axis title
 	svg
 		.append("text")
 			.attr("transform","rotate(-90)")
@@ -119,6 +124,7 @@ let drawChart = function() {
 			.attr("fill", "green")
 			.text("USD in Billions")
 
+	// Append the x axis and move it to the bbottom of the graph and also rotate all text at 45 degrees to make it easier to read
 	svg
 		.append("g")
 			.attr("id", "x-axis")
@@ -128,9 +134,11 @@ let drawChart = function() {
 		.selectAll("text")
 			.style("text-anchor", "end")
 			.attr("transform", "rotate(-45)")
-			.attr("dx", "-0.5em")
+			.attr("dx", "-0.7em")
 			.attr("dy", "1em")
+			.style("font-size", "1.2em")
 
+	// The X axis title is not needed due to it being .. obvious
 	// svg
 	// 	.append("text")
 	// 		.attr("x", width-padding)
@@ -159,3 +167,7 @@ document.addEventListener("DOMContentLoaded", function() {
   XHR.open("GET", URL);
   XHR.send();
 });
+
+
+// to do: ADDITIONAL FUNCTIONALITY
+// ADD BUTTONS/SELECTOR TO SHOW/DRAW GDP GRAPHS FROM OTHER COUNTRIES
